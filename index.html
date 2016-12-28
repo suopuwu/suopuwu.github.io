@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title id="title">Suop</title>
+    <!--external bits-->
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="scripts/prefixfree.min.js"></script>
+    <script src="/scripts/main.js"></script>
+    <!--  <script src="scripts/two.js"></script>-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="splash" id="home">
+            <div class="slide-up-center">
+                <h1 style="padding-top: 20px;" id="welcome">WELCOME</h1>
+            </div>
+            <div class="whitebg fade-in">
+                <a class="no-border" id="breakoutButton"><img src="/images/placeholder.png" alt="Breakout"></a>
+                <a class="no-border" id="debugButton"><img src="http://lorempixel.com/300/300/abstract" alt="Debug"></a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" id="breakoutDiv" style="background: url('/images/tree.png'); display: none;">
+        <canvas id="lay1" width="512" height="512">No canvas for you!</canvas>
+    </div>
+    <div class="container debug" id="debugDiv" style="display: none;">
+        <ul id="debug">
+
+        </ul>
+    </div>
+</body>
+
+</html>
