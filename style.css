@@ -1,4 +1,4 @@
-    body,
+body,
 html {
     color: white;
     color: rgba(256, 256, 256, 0.87);
@@ -44,6 +44,20 @@ a:hover {
     text-decoration: none;
 }
 
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3.5em;
+    letter-spacing: 10px;
+    margin: 0;
+    padding: 0;
+    text-transform: uppercase;
+    transition: font-size 2s;
+}
+
+h1:hover {
+    transform: scale(1.1);
+}
+
 .no-border {
     border: none !important;
 }
@@ -54,10 +68,10 @@ a:hover {
 
 .container {
     align-items: baseline;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/mountains.jpg');
     background-blend-mode: darken, normal;
     background-position: center;
     background-size: cover;
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/mountains.jpg');
     display: flex;
     flex-wrap: wrap;
     height: 100%;
@@ -68,6 +82,7 @@ a:hover {
 
 .whitebg {
     align-items: center;
+    background: #fff;
     background: rgba(255, 255, 255, 0.5);
     flex-flow: row wrap;
     justify-content: space-between;
@@ -81,20 +96,6 @@ a:hover {
     padding: 30px;
     text-align: center;
     text-transform: uppercase;
-}
-
-h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 3.5em;
-    letter-spacing: 10px;
-    margin: 0;
-    padding: 0;
-    text-transform: uppercase;
-    transition: font-size 2s;
-}
-
-h1:hover {
-    transform: scale(1.1);
 }
 
 .splash {
@@ -117,10 +118,6 @@ h1:hover {
     animation-duration: 3s;
     animation-name: slide-up-center;
     position: relative;
-}
-
-.visible {
-    display: flex;
 }
 
 @keyframes fade-in {
@@ -160,8 +157,3 @@ h1:hover {
         background-color: transparent
     }
 }
-
-@media (max-width: 768px) {
-    h1 {
-        font-size: 30px;
-    }

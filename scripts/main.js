@@ -1,4 +1,3 @@
-//function strictWrapper() {
 "use strict";
 //appease the lint gods
 //if you're looking for something to do, search fix or todo
@@ -6,7 +5,7 @@ var mode = 'intro',
     donezo = [
         true, //home
         false, //breakout
-        false
+        false //debug
     ],
     $, //debug
     age = (function () {
@@ -53,6 +52,7 @@ function rand(max, min) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
+//returns a number for the string of the mode
 function getMode(mode) {
     switch (mode) {
         default: return null;
@@ -66,18 +66,6 @@ function getMode(mode) {
     case 'debug':
             return 2;
         break;
-    }
-}
-
-function toggleVisi(mode, elementToToggle) {
-    console.log('function initiated');
-    if (donezo[getMode(mode)] === false && age >= 2) {
-        $(elementToToggle).css('display', 'flex');
-        donezo[getMode(mode)] = true;
-        scrollTo(elementToToggle);
-    } else if (age >= 2) {
-        $(elementToToggle).css('display', 'none');
-        donezo[getMode(mode)] = false;
     }
 }
 
@@ -124,7 +112,6 @@ $(document).ready(function () {
     //buttons
     $('#breakoutButton').click(function () {
         if (donezo[1] === false && age() >= 2) {
-            console.log('it is updating');
             donezo[1] = true;
             $('#breakoutDiv').css('display', 'flex');
             $('#lay1').width(window.innerWidth).height(window.innerHeight);
@@ -139,8 +126,14 @@ $(document).ready(function () {
     });
 
     $('#debugButton').click(function () {
-        //todo: make this work and get debug div good looking
-        $('#debugDiv').toggleClass('.visible');
+        if (donezo[getMode('debug')] === false && age() >= 2) {
+            donezo[getMode('debug')] = true;
+            $('#debugDiv').css('display', 'flex');
+            scrollTo('#debugDiv');
+        } else if (age() >= 2) {
+            donezo[getMode('debug')] = false;
+            $('#debugDiv').css('display', 'none');
+        }
     });
     /*          88
                 88                                           ,d
@@ -167,6 +160,10 @@ $(document).ready(function () {
 
     $(document).keydown(function (event, char) {
         char = event.which; //identify what char was pressed
+        switch (char) {
+        case 27:
+            scrollTo('#home');
+        }
 
         switch (mode) { //handles how to accept inputs depending on mode
             default: //home mode
@@ -180,10 +177,6 @@ $(document).ready(function () {
 
         case 'breakout':
                 $('#title').html('breakout' + char);
-            switch (char) {
-            case 27:
-                scrollTo('#home');
-            }
         }
     });
     $(document).click(function () {
@@ -215,7 +208,6 @@ var bkVars = {
 function breakout() {
     var canvas = document.getElementById("lay1"),
         ctx = canvas.getContext("2d"),
-        //canvas2 = document.getElementById("lay2"), ctx2 = canvas2.getContext("2d"),
         x = canvas.width / 2,
         y = canvas.height / 2,
         dx = -200,
@@ -273,7 +265,7 @@ function breakout() {
         x += dx * modifier;
         y += dy * modifier;
     }
-    //TODO fix the ball make the modifier work
+
     function draw() { //clears canvas and invokes drawball and makes new pos
         if (mode === 'breakout') {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -282,9 +274,7 @@ function breakout() {
             updatePos(delta / 1000);
             drawBall();
             bounce();
-            console.log('test');
             then = now;
-            writeLine(delta / 1000);
         }
         requestAnimFrame(draw);
     }
