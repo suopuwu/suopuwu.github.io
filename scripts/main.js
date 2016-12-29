@@ -222,6 +222,7 @@ function breakout() {
     }
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
+    //TODO find out why resize canvas is running but not resizing
 
     function drawBall() { //actually draws it
         ctx.beginPath();
