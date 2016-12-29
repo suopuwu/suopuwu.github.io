@@ -58,6 +58,11 @@ h1:hover {
     transform: scale(1.1);
 }
 
+ul {
+    font-family: 'Inconsolata', monospace;
+    list-style: none;
+}
+
 .no-border {
     border: none !important;
 }
@@ -119,6 +124,8 @@ h1:hover {
     animation-name: slide-up-center;
     position: relative;
 }
+
+.debug {}
 
 @keyframes fade-in {
     0% {

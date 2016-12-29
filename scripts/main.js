@@ -57,15 +57,15 @@ function getMode(mode) {
     switch (mode) {
         default: return null;
         break;
-    case 'home':
-            return 0;
-        break;
-    case 'breakout':
-            return 1;
-        break;
-    case 'debug':
-            return 2;
-        break;
+        case 'home':
+                return 0;
+            break;
+        case 'breakout':
+                return 1;
+            break;
+        case 'debug':
+                return 2;
+            break;
     }
 }
 
@@ -161,28 +161,28 @@ $(document).ready(function () {
     $(document).keydown(function (event, char) {
         char = event.which; //identify what char was pressed
         switch (char) {
-        case 27:
-            scrollTo('#home');
+            case 27:
+                scrollTo('#home');
         }
 
         switch (mode) { //handles how to accept inputs depending on mode
             default: //home mode
                 $('#title').html('home' + char);
             break;
-        case 'intro':
-                $('#title').html('title' + char);
-            skipIntro();
-            mode = null;
-            break;
+            case 'intro':
+                    $('#title').html('title' + char);
+                skipIntro();
+                mode = null;
+                break;
 
-        case 'breakout':
-                $('#title').html('breakout' + char);
+            case 'breakout':
+                    $('#title').html('breakout' + char);
         }
     });
     $(document).click(function () {
         switch (mode) {
-        case 'intro':
-            skipIntro();
+            case 'intro':
+                skipIntro();
         }
     });
 
@@ -218,6 +218,7 @@ function breakout() {
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        writeLine('breakout has been resized')
     }
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
@@ -260,6 +261,9 @@ function breakout() {
             }
         }
     }
+
+    //paddle begins here
+
 
     function updatePos(modifier) {
         x += dx * modifier;
