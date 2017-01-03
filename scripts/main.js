@@ -114,7 +114,6 @@ $(document).ready(function () {
         if (donezo[1] === false && age() >= 2) {
             donezo[1] = true;
             $('#breakoutDiv').css('display', 'flex');
-            $('#lay1').width(window.innerWidth).height(window.innerHeight);
             mode = 'breakout';
             breakout();
             scrollTo('#lay1');
@@ -206,6 +205,7 @@ var bkVars = {
 };
 
 function breakout() {
+
     var canvas = document.getElementById("lay1"),
         ctx = canvas.getContext("2d"),
         x = canvas.width / 2,
@@ -213,16 +213,17 @@ function breakout() {
         dx = -200,
         dy = -200,
         xdir = 1,
-        ydir = 1;
+        ydir = 1,
+        ballRandFloor = 654;
+
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        writeLine('breakout has been resized')
     }
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
-    //TODO find out why resize canvas is running but not resizing
+    writeLine(canvas.width + ' x ' + canvas.height);
 
     function drawBall() { //actually draws it
         ctx.beginPath();
