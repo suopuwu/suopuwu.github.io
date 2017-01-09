@@ -1,19 +1,23 @@
 "use strict";
 //appease the lint gods
 //if you're looking for something to do, search fix or todo
-var mode = 'intro',
-    donezo = [
+var MODE = 'intro',
+    DONEZO = [
         true, //home
         false, //breakout
         false //debug
     ],
-    $, //debug
-    age = (function () {
+    $,
+    AGE = (function () {
         var counter = 0;
         return function () {
             return counter += 0.05;
         };
     })();
+//the ids of the screens in order of cascade
+var SCROLLORDER = [],
+    //the number of 'screens' after home
+    WINDOWS = 0;
 
 /*88888888ba
   88      "8b
@@ -90,8 +94,8 @@ $(document).ready(function () {
 
     function aaa() { //startup functions with delay
         $('#welcome').css('transition', '2s');
-        if (mode === 'intro') {
-            mode = null;
+        if (MODE === 'intro') {
+            MODE = null;
         }
         $('img:hover').css('cursor', 'pointer');
     }
@@ -102,35 +106,34 @@ $(document).ready(function () {
     //closure and age 
 
     function aac() {
-        age();
+        AGE();
     }
-
     setTimeout(aaa, 3000);
     setTimeout(aab, 2000);
     setInterval(aac, 50);
 
     //buttons
     $('#breakoutButton').click(function () {
-        if (donezo[1] === false && age() >= 2) {
-            donezo[1] = true;
+        if (DONEZO[1] === false && AGE() >= 2) {
+            DONEZO[1] = true;
             $('#breakoutDiv').css('display', 'flex');
-            mode = 'breakout';
+            MODE = 'breakout';
             breakout();
             scrollTo('#lay1');
-        } else if (age() >= 2) {
-            donezo[1] = false;
+        } else if (AGE() >= 2) {
+            DONEZO[1] = false;
             $('#breakoutDiv').css('display', 'none');
-            mode = null;
+            MODE = null;
         }
     });
 
     $('#debugButton').click(function () {
-        if (donezo[getMode('debug')] === false && age() >= 2) {
-            donezo[getMode('debug')] = true;
+        if (DONEZO[getMode('debug')] === false && AGE() >= 2) {
+            DONEZO[getMode('debug')] = true;
             $('#debugDiv').css('display', 'flex');
             scrollTo('#debugDiv');
-        } else if (age() >= 2) {
-            donezo[getMode('debug')] = false;
+        } else if (AGE() >= 2) {
+            DONEZO[getMode('debug')] = false;
             $('#debugDiv').css('display', 'none');
         }
     });
@@ -144,19 +147,28 @@ $(document).ready(function () {
                 88  88       88  88`YbbdP"'    `"YbbdP'Y8    "Y888  `"YbbdP"'
                                  88
                                  88*/
+    //it takes 184 miliseconds for one scroll in chrome
+    //TODO make one scroll scroll up or down a segment
+    window.addEventListener('scroll', debug);
+
+    var scrollTimer = (function () {
+        var now = Date.now();
+        return function () {
+            /*innerFunction*/
+        }
+    })();
     //a function... to skip the intro animation
     function skipIntro() {
-        if (age() <= 2) {
-            $('.slide-up-center').css('animation-delay', -2 + age() + "s");
+        if (AGE() <= 2) {
+            $('.slide-up-center').css('animation-delay', -2 + AGE() + "s");
         }
-        if (age() <= 1) {
-            $('.splash').css('animation-delay', -1 + age() + "s");
+        if (AGE() <= 1) {
+            $('.splash').css('animation-delay', -1 + AGE() + "s");
         } //if key is escape, speed animation
-        if (age() <= 1.5) {
-            $('.whitebg').css('animation-delay', -1.5 + age() + "s");
+        if (AGE() <= 1.5) {
+            $('.whitebg').css('animation-delay', -1.5 + AGE() + "s");
         }
     }
-
     $(document).keydown(function (event, char) {
         char = event.which; //identify what char was pressed
         switch (char) {
@@ -164,14 +176,14 @@ $(document).ready(function () {
                 scrollTo('#home');
         }
 
-        switch (mode) { //handles how to accept inputs depending on mode
+        switch (MODE) { //handles how to accept inputs depending on mode
             default: //home mode
                 $('#title').html('home' + char);
             break;
             case 'intro':
                     $('#title').html('title' + char);
                 skipIntro();
-                mode = null;
+                MODE = null;
                 break;
 
             case 'breakout':
@@ -179,7 +191,7 @@ $(document).ready(function () {
         }
     });
     $(document).click(function () {
-        switch (mode) {
+        switch (MODE) {
             case 'intro':
                 skipIntro();
         }
@@ -273,7 +285,7 @@ function breakout() {
     }
 
     function draw() { //clears canvas and invokes drawball and makes new pos
-        if (mode === 'breakout') {
+        if (MODE === 'breakout') {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             var now = Date.now();
             var delta = now - then;
