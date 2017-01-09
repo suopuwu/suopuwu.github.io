@@ -8,16 +8,16 @@ var MODE = 'intro',
         false //debug
     ],
     $,
+    //the age of the webpage, incrementing every 50 miliseconds
     AGE = (function () {
         var counter = 0;
         return function () {
             return counter += 0.05;
         };
     })();
+var CURRENTWINDOW = 0;
 //the ids of the screens in order of cascade
-var SCROLLORDER = [],
-    //the number of 'screens' after home
-    WINDOWS = 0;
+var SCROLLORDER = ['#home'];
 
 /*88888888ba
   88      "8b
@@ -27,6 +27,18 @@ var SCROLLORDER = [],
   88      `8b  ,adPPPPP88   `"Y8ba,   8PP"""""""
   88      a8P  88,    ,88  aa    ]8I  "8b,   ,aa
   88888888P"   `"8bbdP"Y8  `"YbbdP"'   `"Ybbd8"'  Base*/
+//a function... to skip the intro animation
+function skipIntro() {
+    if (AGE() <= 2) {
+        $('.slide-up-center').css('animation-delay', -2 + AGE() + "s");
+    }
+    if (AGE() <= 1) {
+        $('.splash').css('animation-delay', -1 + AGE() + "s");
+    } //if key is escape, speed animation
+    if (AGE() <= 1.5) {
+        $('.whitebg').css('animation-delay', -1.5 + AGE() + "s");
+    }
+}
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -47,7 +59,7 @@ window.cancelAnimationFrame = (function () {
 function scrollTo(targetElement) {
     $('html, body').animate({
         scrollTop: $(targetElement).offset().top
-    }, 1000);
+    }, 500);
 }
 
 function rand(max, min) {
@@ -64,18 +76,54 @@ function getMode(mode) {
         case 'home':
                 return 0;
             break;
+
         case 'breakout':
                 return 1;
             break;
+
         case 'debug':
                 return 2;
             break;
+
     }
 }
-
+//adds new item to debugDiv
 function writeLine(what_to_log) {
     $('#debug').prepend('<li>' + what_to_log + '</li>');
 }
+//removes # and Div from strings
+function removeHash(stringToRemoveHash) {
+    var noHash = stringToRemoveHash.split('');
+    noHash.splice(0, 1);
+    noHash.splice(noHash.indexOf('D'), 3);
+    noHash = noHash.join('');
+    return noHash;
+}
+//changes mode, DONEZO, visibility on selected element, adds to SCROLLORDER, and scrolls to selected element
+function newWindow(theNewWindow) {
+    //get the div without Div and #
+    var noHash = removeHash(theNewWindow);
+    //set donezo to true
+    DONEZO[getMode(noHash)] = true;
+    //change mode
+    MODE = noHash;
+    //make visible
+    $(theNewWindow).css('display', 'flex');
+    //move to after homeDiv
+    $(theNewWindow).insertAfter('#homeDiv');
+    //add to scrollorder
+    SCROLLORDER.splice(1, 0, theNewWindow);
+    scrollTo(theNewWindow);
+    CURRENTWINDOW += 1;
+}
+
+function removeWindow(windowToRemove) {
+    var noHash = removeHash(windowToRemove);
+    DONEZO[getMode(noHash)] = false;
+    $(windowToRemove).css('display', 'none');
+    SCROLLORDER.splice(SCROLLORDER.indexOf(windowToRemove), 1);
+}
+
 /*88b           d88              88
   888b         d888              ""
   88`8b       d8'88
@@ -114,27 +162,19 @@ $(document).ready(function () {
 
     //buttons
     $('#breakoutButton').click(function () {
-        if (DONEZO[1] === false && AGE() >= 2) {
-            DONEZO[1] = true;
-            $('#breakoutDiv').css('display', 'flex');
-            MODE = 'breakout';
+        if (DONEZO[1] === false && AGE() >= 2) { //if window is not visible
+            newWindow('#breakoutDiv');
             breakout();
-            scrollTo('#lay1');
-        } else if (AGE() >= 2) {
-            DONEZO[1] = false;
-            $('#breakoutDiv').css('display', 'none');
-            MODE = null;
+        } else if (AGE() >= 2) { //if it is
+            removeWindow('#breakoutDiv');
         }
     });
 
     $('#debugButton').click(function () {
         if (DONEZO[getMode('debug')] === false && AGE() >= 2) {
-            DONEZO[getMode('debug')] = true;
-            $('#debugDiv').css('display', 'flex');
-            scrollTo('#debugDiv');
+            newWindow('#debugDiv');
         } else if (AGE() >= 2) {
-            DONEZO[getMode('debug')] = false;
-            $('#debugDiv').css('display', 'none');
+            removeWindow('#debugDiv');
         }
     });
     /*          88
@@ -147,28 +187,21 @@ $(document).ready(function () {
                 88  88       88  88`YbbdP"'    `"YbbdP'Y8    "Y888  `"YbbdP"'
                                  88
                                  88*/
-    //it takes 184 miliseconds for one scroll in chrome
-    //TODO make one scroll scroll up or down a segment
-    window.addEventListener('scroll', debug);
+    //runs on scroll
+    $(window).on('wheel', function (e) {
+        var scrollNum = e.originalEvent.deltaY;
+        if (scrollNum < 0 && CURRENTWINDOW > 0) { //on scroll up
+            CURRENTWINDOW -= 1
+            scrollTo(SCROLLORDER[CURRENTWINDOW]);
+            MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
+        } else {
+            CURRENTWINDOW += 1
+            scrollTo(SCROLLORDER[CURRENTWINDOW]);
+            MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
+        }
+    });
 
-    var scrollTimer = (function () {
-        var now = Date.now();
-        return function () {
-            /*innerFunction*/
-        }
-    })();
-    //a function... to skip the intro animation
-    function skipIntro() {
-        if (AGE() <= 2) {
-            $('.slide-up-center').css('animation-delay', -2 + AGE() + "s");
-        }
-        if (AGE() <= 1) {
-            $('.splash').css('animation-delay', -1 + AGE() + "s");
-        } //if key is escape, speed animation
-        if (AGE() <= 1.5) {
-            $('.whitebg').css('animation-delay', -1.5 + AGE() + "s");
-        }
-    }
+    //runs on keypress
     $(document).keydown(function (event, char) {
         char = event.which; //identify what char was pressed
         switch (char) {
@@ -188,6 +221,11 @@ $(document).ready(function () {
 
             case 'breakout':
                     $('#title').html('breakout' + char);
+                break;
+            case 'debug':
+                    $('#title').html('debug' + char);
+                break;
+
         }
     });
     $(document).click(function () {
@@ -235,7 +273,6 @@ function breakout() {
     }
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
-    writeLine(canvas.width + ' x ' + canvas.height);
 
     function drawBall() { //actually draws it
         ctx.beginPath();
