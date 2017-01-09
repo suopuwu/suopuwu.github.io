@@ -194,7 +194,7 @@ $(document).ready(function () {
             CURRENTWINDOW -= 1
             scrollTo(SCROLLORDER[CURRENTWINDOW]);
             MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
-        } else {
+        } else if (scrollNum > 0 && CURRENTWINDOW < DONEZO.length - 1) {
             CURRENTWINDOW += 1
             scrollTo(SCROLLORDER[CURRENTWINDOW]);
             MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
