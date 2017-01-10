@@ -1,0 +1,4 @@
+Get firebase working
+Test paralax effect
+Finish breakout lol
+cool svg animations

@@ -1,6 +1,0 @@
-https://two.js.org/
-http://underscorejs.org/
-http://backbonejs.org/
-transitions are easier than keyframes but more limmited. 
-keyframes cant have a leaving animation
-syntax for transitions are just the property that is being changed in the psuedo class then the time it takes to animate

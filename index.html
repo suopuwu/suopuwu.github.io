@@ -6,26 +6,21 @@
     <!--external bits-->
     <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBhsNl2LH7Q2KCTMb84G3oS_La_PeeiB0I",
+            authDomain: "my-github-pages-page.firebaseapp.com",
+            databaseURL: "https://my-github-pages-page.firebaseio.com",
+            storageBucket: "my-github-pages-page.appspot.com",
+            messagingSenderId: "860250137397"
+        };
+        firebase.initializeApp(config);
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="scripts/prefixfree.min.js"></script>
     <script src="/scripts/main.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script>
-    <script>
-        // Initialize Firebase
-        // TODO: Replace with your project's customized code snippet
-        var config = {
-            apiKey: "<API_KEY>",
-            authDomain: "<PROJECT_ID>.firebaseapp.com",
-            databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
-            storageBucket: "<BUCKET>.appspot.com",
-            messagingSenderId: "<SENDER_ID>",
-        };
-        firebase.initializeApp(config);
-
-    </script>
     <!--  <script src="scripts/two.js"></script>-->
 </head>
 
