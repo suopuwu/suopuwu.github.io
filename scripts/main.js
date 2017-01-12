@@ -124,6 +124,9 @@ function removeWindow(windowToRemove) {
     SCROLLORDER.splice(SCROLLORDER.indexOf(windowToRemove), 1);
 }
 
+function add(a, b) {
+    return a + b;
+}
 /*88b           d88              88
   888b         d888              ""
   88`8b       d8'88
@@ -251,8 +254,10 @@ var bkVars = {
     x: (function () {
         var canvas = document.getElementById('lay1');
         return canvas / 2;
-    })
-
+    }),
+    drawPauseDone: null,
+    delta: null,
+    deltaAvg: []
 };
 
 function breakout() {
@@ -265,7 +270,8 @@ function breakout() {
         dy = -200,
         xdir = 1,
         ydir = 1,
-        ballRandFloor = 654;
+        ballRandFloor = canvas.height / 2,
+        ballRandCeil = canvas.height / 0.8;
 
 
     function resizeCanvas() {
@@ -295,8 +301,8 @@ function breakout() {
             ydir = -1;
         }
         if (x >= canvas.width - 10 || x <= 10) {
-            dx = rand(200, 400) * -xdir;
-            dy = rand(200, 400) * ydir;
+            dx = rand(ballRandFloor, ballRandCeil) * -xdir;
+            dy = rand(ballRandFloor, ballRandCeil) * ydir;
             if (x >= canvas.width - 10) { //move the ball back onto the canvas to prevent jittering
                 x = canvas.width - 10;
             } else {
@@ -304,8 +310,8 @@ function breakout() {
             }
         }
         if (y >= canvas.height - 10 || y <= 10) {
-            dy = rand(200, 400) * -ydir;
-            dx = rand(200, 400) * xdir;
+            dy = rand(ballRandFloor, ballRandCeil) * -ydir;
+            dx = rand(ballRandFloor, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
                 y = canvas.height - 10;
             } else {
@@ -326,11 +332,18 @@ function breakout() {
         if (MODE === 'breakout') {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             var now = Date.now();
-            var delta = now - then;
-            updatePos(delta / 1000);
+            if (bkVars.drawPauseDone == null) {
+                bkVars.delta = now - then;
+            } else {
+                bkVars.drawPauseDone = null;
+                bkVars.delta = 1;
+            }
+            updatePos(bkVars.delta / 1000);
             drawBall();
             bounce();
             then = now;
+        } else {
+            bkVars.drawPauseDone = true;
         }
         requestAnimFrame(draw);
     }
