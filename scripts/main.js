@@ -8,6 +8,12 @@ var MODE = 'intro',
         false //debug
     ],
     $,
+    firebase,
+    window,
+    document,
+    setTimeout,
+    setInterval,
+    requestAnimFrame,
     //the age of the webpage, incrementing every 50 miliseconds
     AGE = (function () {
         var counter = 0;
@@ -15,10 +21,16 @@ var MODE = 'intro',
             return counter += 0.05;
         };
     })();
+//the keys that are down
+var keysDown = {};
+//the id of the current window
 var CURRENTWINDOW = 0;
 //the ids of the screens in order of cascade
 var SCROLLORDER = ['#home'];
-
+//TODO the beginnings of Firebase (hopefully)
+var database = firebase.database();
+// Get a key for a new user.
+var newuid = firebase.database().ref().child('users').push().key;
 /*88888888ba
   88      "8b
   88      ,8P
@@ -27,6 +39,12 @@ var SCROLLORDER = ['#home'];
   88      `8b  ,adPPPPP88   `"Y8ba,   8PP"""""""
   88      a8P  88,    ,88  aa    ]8I  "8b,   ,aa
   88888888P"   `"8bbdP"Y8  `"YbbdP"'   `"Ybbd8"'  Base*/
+//firebase stuff
+function addUser(userName, userId) { //IMPORTANT this is how you write to the database
+    database.ref('users/' + userId).set({
+        userName: userName
+    });
+}
 //a function... to skip the intro animation
 function skipIntro() {
     if (AGE() <= 2) {
@@ -72,18 +90,14 @@ function rand(max, min) {
 function getMode(mode) {
     switch (mode) {
         default: return null;
-        break;
         case 'home':
                 return 0;
-            break;
 
         case 'breakout':
                 return 1;
-            break;
 
         case 'debug':
                 return 2;
-            break;
 
     }
 }
@@ -174,6 +188,7 @@ $(document).ready(function () {
     });
 
     $('#debugButton').click(function () {
+        addUser('dummy', newuid);
         if (DONEZO[getMode('debug')] === false && AGE() >= 2) {
             newWindow('#debugDiv');
         } else if (AGE() >= 2) {
@@ -194,12 +209,12 @@ $(document).ready(function () {
     $(window).on('wheel', function (e) {
         var scrollNum = e.originalEvent.deltaY;
         if (scrollNum < 0 && CURRENTWINDOW > 0) { //on scroll up
-            CURRENTWINDOW -= 1
+            CURRENTWINDOW -= 1;
             scrollTo(SCROLLORDER[CURRENTWINDOW]);
             MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
 
         } else if (scrollNum > 0 && CURRENTWINDOW !== SCROLLORDER.length - 1) { //on scroll down
-            CURRENTWINDOW += 1
+            CURRENTWINDOW += 1;
             scrollTo(SCROLLORDER[CURRENTWINDOW]);
             MODE = removeHash(SCROLLORDER[CURRENTWINDOW]);
         }
@@ -208,6 +223,7 @@ $(document).ready(function () {
     //runs on keypress
     $(document).keydown(function (event, char) {
         char = event.which; //identify what char was pressed
+        keysDown[event.keyCode] = true;
         switch (char) {
             case 27:
                 scrollTo('#home');
@@ -222,15 +238,17 @@ $(document).ready(function () {
                 skipIntro();
                 MODE = null;
                 break;
-
             case 'breakout':
-                    $('#title').html('breakout' + char);
-                break;
+                    break;
             case 'debug':
                     $('#title').html('debug' + char);
                 break;
 
         }
+    });
+    $(document).keyup(function (event, char) {
+        char = event.which;
+        delete keysDown[event.keyCode];
     });
     $(document).click(function () {
         switch (MODE) {
@@ -250,29 +268,17 @@ $(document).ready(function () {
   88      `8b  88          8PP"""""""  ,adPPPPP88  8888[     8b       d8  88       88    88
   88      a8P  88          "8b,   ,aa  88,    ,88  88`"Yba,  "8a,   ,a8"  "8a,   ,a88    88,
   88888888P"   88           `"Ybbd8"'  `"8bbdP"Y8  88   `Y8a  `"YbbdP"'    `"YbbdP'Y8    "Y888  Breakout*/
-var bkVars = {
-    x: (function () {
-        var canvas = document.getElementById('lay1');
-        return canvas / 2;
-    }),
+var BKVARS = {
+    paddlePosX: 500,
+    paddlePosY: null,
     drawPauseDone: null,
     delta: null,
-    deltaAvg: []
+    paddleSpeed: $('#lay1').height / 2
 };
+//input handling
 
 function breakout() {
-
-    var canvas = document.getElementById("lay1"),
-        ctx = canvas.getContext("2d"),
-        x = canvas.width / 2,
-        y = canvas.height / 2,
-        dx = -200,
-        dy = -200,
-        xdir = 1,
-        ydir = 1,
-        ballRandFloor = canvas.height / 2,
-        ballRandCeil = canvas.height / 0.8;
-
+    var canvas = document.getElementById("lay1");
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -280,6 +286,21 @@ function breakout() {
     }
     window.addEventListener('resize', resizeCanvas, false);
     resizeCanvas();
+    var ctx = canvas.getContext("2d");
+    var x = canvas.width / 2;
+    var y = canvas.height / 2;
+    var dx = -200;
+    var dy = -200;
+    var xdir = 1;
+    var ydir = 1;
+    var ballRandFloor = canvas.height / 3;
+    var ballRandCeil = canvas.height / 2;
+    var paddleWidth = 160;
+    var paddleheight = 15;
+    BKVARS.paddlePosX = canvas.width / 2;
+    BKVARS.paddlePosY = canvas.height - 35;
+    BKVARS.paddleSpeed = canvas.width / 2;
+
 
     function drawBall() { //actually draws it
         ctx.beginPath();
@@ -290,6 +311,7 @@ function breakout() {
     }
 
     function bounce() { //changes trajectory of bounce
+
         if (dx > 0) {
             xdir = 1;
         } else {
@@ -300,7 +322,7 @@ function breakout() {
         } else {
             ydir = -1;
         }
-        if (x >= canvas.width - 10 || x <= 10) {
+        if (x >= canvas.width - 10 || x <= 10) { //bounce on walls
             dx = rand(ballRandFloor, ballRandCeil) * -xdir;
             dy = rand(ballRandFloor, ballRandCeil) * ydir;
             if (x >= canvas.width - 10) { //move the ball back onto the canvas to prevent jittering
@@ -309,7 +331,7 @@ function breakout() {
                 x = 10;
             }
         }
-        if (y >= canvas.height - 10 || y <= 10) {
+        if (y >= canvas.height - 10 || y <= 10) { //bounce on ceiling and floor and paddle (soonTM)
             dy = rand(ballRandFloor, ballRandCeil) * -ydir;
             dx = rand(ballRandFloor, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
@@ -320,30 +342,57 @@ function breakout() {
         }
     }
 
-    //paddle begins here
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
+    function drawPaddle() {
+        ctx.beginPath();
+        ctx.rect((BKVARS.paddlePosX - (paddleWidth / 2)), //make centered
+            BKVARS.paddlePosY, paddleWidth, paddleheight);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.closePath();
+    }
 
-    function updatePos(modifier) {
+    function updateValues(modifier) {
+        //update the ball position
         x += dx * modifier;
         y += dy * modifier;
+        //update the paddle position
+        if (65 in keysDown === true ||
+            37 in keysDown === true &&
+            BKVARS.paddlePosX >= paddleWidth / 2
+        ) {
+            BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier;
+        }
+        if (68 in keysDown === true ||
+            39 in keysDown === true &&
+            BKVARS.paddlePosX <= (canvas.width - (paddleWidth / 2))
+        ) {
+            BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
+        }
     }
+
 
     function draw() { //clears canvas and invokes drawball and makes new pos
         if (MODE === 'breakout') {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             var now = Date.now();
-            if (bkVars.drawPauseDone == null) {
-                bkVars.delta = now - then;
+            clearCanvas();
+            //makes delta a different value depending on whether it was lag or moving away from the window
+            if (BKVARS.drawPauseDone === null) {
+                BKVARS.delta = now - then;
             } else {
-                bkVars.drawPauseDone = null;
-                bkVars.delta = 1;
+                BKVARS.drawPauseDone = null;
+                BKVARS.delta = 1;
             }
-            updatePos(bkVars.delta / 1000);
+            updateValues(BKVARS.delta / 1000);
+            drawPaddle();
             drawBall();
             bounce();
             then = now;
         } else {
-            bkVars.drawPauseDone = true;
+            BKVARS.drawPauseDone = true;
         }
         requestAnimFrame(draw);
     }

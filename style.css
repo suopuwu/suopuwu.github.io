@@ -118,6 +118,11 @@ ul {
     animation: fade-in 3s;
 }
 
+.icon {
+    width: 300;
+    height: 300;
+}
+
 .slide-up-center {
     animation-duration: 3s;
     animation-name: slide-up-center;
