@@ -331,7 +331,7 @@ function breakout() {
                 x = 10;
             }
         }
-        if (y >= canvas.height - 10 || y <= 10) { //bounce on ceiling and floor and paddle (soonTM)
+        if (y >= canvas.height - 10 || y <= 10) { //bounce on ceiling and floor
             dy = rand(ballRandFloor, ballRandCeil) * -ydir;
             dx = rand(ballRandFloor, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
@@ -339,6 +339,14 @@ function breakout() {
             } else {
                 y = 10;
             }
+        }
+        if (y >= BKVARS.paddlePosY - paddleheight &&
+            x >= BKVARS.paddlePosX - (paddleWidth / 2) &&
+            x <= BKVARS.paddlePosX + (paddleWidth / 2)
+        ) {
+            dy = rand(ballRandFloor, ballRandCeil) * -ydir;
+            dx = rand(ballRandFloor, ballRandCeil) * xdir;
+            y = BKVARS.paddlePosY - paddleheight;
         }
     }
 
