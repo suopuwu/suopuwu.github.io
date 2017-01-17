@@ -1,0 +1,80 @@
+{
+    "reasons": [
+        {
+            "event": "Birth",
+            "date": "Oct 21 2002",
+            "reason": "If I wasnt born then I wouldnt exist...",
+            "bg": "url('/images/healthThingy/cupcake.jpg')"
+        },
+
+        {
+            "event": "First word",
+            "date": "~Jun 2002",
+            "reason": "If I had never had a first word, I would be illiterate which would suck.",
+            "bg": "url('/images/healthThingy/quote.jpg')"
+        },
+
+        {
+            "event": "First step",
+            "date": "~Dec 2003",
+            "reason": "If I had never had a first step, I would be unable to walk.",
+            "bg": "url('/images/healthThingy/shoes.jpg')"
+        },
+
+        {
+            "event": "Move to idaho falls usa",
+            "date": "~2004",
+            "reason": "The switch from China to the USA changes my culture",
+            "bg": "url('/images/healthThingy/falls.jpg')"
+        },
+
+        {
+            "event": "Move to boise",
+            "date": "~2007",
+            "reason": "Moving to boise allowed my to meet such lovely people like Mr McGerty",
+            "bg": "url('/images/healthThingy/boise.jpeg')"
+        },
+
+        {
+            "event": "Choose pioneer school of arts",
+            "date": "~2008",
+            "reason": "Choosing pioneer as my school allowed me to meet all the people I forgot after elementary school",
+            "bg": "url('/images/healthThingy/arts.jpg')"
+        },
+
+        {
+            "event": "Get brainwashed by mrs. peterson",
+            "date": "~2008",
+            "reason": "If I hadn't been taught that nothing matters other than Mistress Peterson, I wouldn't be living the fulfilled life I am today.",
+            "bg": "url('/images/healthThingy/brain.jpg')"
+        },
+
+        {
+            "event": "Join challenge",
+            "date": "~2013",
+            "reason": "Joining challenge allowed me to meet people that I also forgot after elementary school, and it guaranteed a spot in GT for me",
+            "bg": "url('/images/healthThingy/babby.jpeg')"
+        },
+
+        {
+            "event": "Graduate from elementary",
+            "date": "~2014",
+            "reason": "Graduating from elementary allowed me to progress in life and my education (no I'm not in the picture)",
+            "bg": "url('/images/healthThingy/graduate.jpg')"
+        },
+
+        {
+            "event": "Choose lowell scott.",
+            "date": "~2014",
+            "reason": "Going to lowell scott has allowed me to meet all these people that I'll probably forget in high school.",
+            "bg": "url('/images/healthThingy/middleSchool.jpg')"
+        },
+
+        {
+            "event": "Make this assignment for mr mcgerty.",
+            "date": "Jan 2017",
+            "reason": "Mr McGerty is my favorite teacher, so when I heard that I would be doing this assignment for him I was overjoyed to know that I would have the honor of making something that would be graced by his gaze",
+            "bg": "url('/images/healthThingy/mcGerty.jpg')"
+        }
+	]
+}

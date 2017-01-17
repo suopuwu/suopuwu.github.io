@@ -52,10 +52,24 @@ h1 {
     padding: 0;
     text-transform: uppercase;
     transition: font-size 2s;
+    flex-shrink: 3;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 h1:hover {
     transform: scale(1.1);
+}
+
+h2 {
+    font-size: 2em;
+    font-family: 'Inconsolata', monospace;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+h3 {
+    font-size: 1.25em;
+    font-family: 'Inconsolata', monospace;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 ul {
@@ -75,7 +89,8 @@ ul {
     align-items: baseline;
     background-blend-mode: darken, normal;
     background-position: center;
-    background-size: cover;
+    background-size: 100%;
+    color: #fff;
     display: flex;
     flex-wrap: wrap;
     height: 100%;
