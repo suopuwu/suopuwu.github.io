@@ -1,0 +1,16 @@
+h1 {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+    font-size: 2em;
+    font-family: 'Inconsolata', monospace;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+h3 {
+    font-size: 1.25em;
+    font-family: 'Inconsolata', monospace;
+    background: rgba(0, 0, 0, 0.5);
+
+}

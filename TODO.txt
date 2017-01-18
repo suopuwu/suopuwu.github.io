@@ -1,3 +1,4 @@
+http://www.howtogeek.com/96298/assign-a-static-drive-letter-to-a-usb-drive-in-windows-7/
 Get firebase working
 Test paralax effect
 Finish breakout lol

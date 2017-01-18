@@ -1,0 +1,88 @@
+img {
+    transition: all .4s ease-in-out;
+}
+
+img:hover {
+    transform: scale(1.13);
+}
+
+h1 {
+    transition: font-size 2s;
+}
+
+h1:hover {
+    transform: scale(1.1);
+}
+
+.no-border {
+    border: none !important;
+}
+
+.no-border:hover {
+    border: none;
+}
+
+.splash {
+    align-items: center;
+    animation-duration: 2s;
+    animation-name: splash;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 100%;
+}
+
+.fade-in {
+    animation: fade-in 3s;
+}
+
+.icon {
+    width: 300;
+    height: 300;
+}
+
+.slide-up-center {
+    animation-duration: 3s;
+    animation-name: slide-up-center;
+    position: relative;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    75% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slide-up-center {
+    0% {
+        opacity: 0;
+        top: calc(45% - 80px);
+    }
+    75% {
+        opacity: 1;
+        top: calc(45% - 80px);
+    }
+    100% {
+        top: 0;
+    }
+}
+
+@keyframes splash {
+    0% {
+        background-color: black;
+    }
+    75% {
+        background-color: black;
+    }
+    100% {
+        background-color: transparent
+    }
+}
