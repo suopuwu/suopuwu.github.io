@@ -14,6 +14,7 @@ var MODE = 'intro',
     setTimeout,
     setInterval,
     requestAnimFrame,
+    CanvasRenderingContext2D,
     //the age of the webpage, incrementing every 50 miliseconds
     AGE = (function () {
         var counter = 0;
@@ -195,6 +196,7 @@ $(document).ready(function () {
             removeWindow('#debugDiv');
         }
     });
+
     /*          88
                 88                                           ,d
                 88                                           88
@@ -206,6 +208,11 @@ $(document).ready(function () {
                                  88
                                  88*/
     //runs on scroll
+    window.addEventListener('resize', CurrentWindowScroll, false);
+
+    function CurrentWindowScroll() {
+        scrollTo(SCROLLORDER[CURRENTWINDOW]);
+    }
     $(window).on('wheel', function (e) {
         var scrollNum = e.originalEvent.deltaY;
         if (scrollNum < 0 && CURRENTWINDOW > 0) { //on scroll up
@@ -239,7 +246,8 @@ $(document).ready(function () {
                 MODE = null;
                 break;
             case 'breakout':
-                    break;
+                    breakoutInputs(char);
+                break;
             case 'debug':
                     $('#title').html('debug' + char);
                 break;
@@ -276,9 +284,16 @@ var BKVARS = {
     paddleSpeed: $('#lay1').height / 2
 };
 //input handling
+function breakoutInputs(char) {
 
-function breakout() {
+}
+
+function breakout() { //TODO add an in game menu
     var canvas = document.getElementById("lay1");
+    //settings
+    var settings = {
+        spinnyBall: true
+    };
 
     function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -300,15 +315,6 @@ function breakout() {
     BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosY = canvas.height - 35;
     BKVARS.paddleSpeed = canvas.width / 2;
-
-
-    function drawBall() { //actually draws it
-        ctx.beginPath();
-        ctx.rect(x - 10, y - 10, 20, 20);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-        ctx.closePath();
-    }
 
     function bounce() { //changes trajectory of bounce
 
@@ -350,17 +356,45 @@ function breakout() {
         }
     }
 
+    ctx.fillStyle = '#fff';
+
+    var spinnyBall = (function () {
+        var angle = 0;
+        return function () {
+            angle++;
+            return angle;
+        };
+    })();
+
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
+
+
+    function drawBall() { //draws it
+        if (settings.spinnyBall === true) {
+            drawBall = (function () {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(spinnyBall() * Math.PI / 180);
+                ctx.fillRect(-10, -10, 20, 20);
+                ctx.restore();
+            });
+        } else {
+            drawBall = (function () {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.fillRect(-10, -10, 20, 20);
+                ctx.restore();
+            });
+        }
+    }
+    drawBall();
+
     function drawPaddle() {
-        ctx.beginPath();
-        ctx.rect((BKVARS.paddlePosX - (paddleWidth / 2)), //make centered
+        ctx.fillRect((BKVARS.paddlePosX - (paddleWidth / 2)), //make centered
             BKVARS.paddlePosY, paddleWidth, paddleheight);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-        ctx.closePath();
     }
 
     function updateValues(modifier) {
@@ -381,10 +415,10 @@ function breakout() {
             BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
         }
     }
+    //TODO make a system for easily drawing particles
 
-
-    function draw() { //clears canvas and invokes drawball and makes new pos
-        if (MODE === 'breakout') {
+    function breakoutDraw() { //clears canvas and invokes drawball and makes new pos
+        if (MODE === 'breakout') { //TODO find a way to increase performance.
             var now = Date.now();
             clearCanvas();
             //makes delta a different value depending on whether it was lag or moving away from the window
@@ -402,8 +436,8 @@ function breakout() {
         } else {
             BKVARS.drawPauseDone = true;
         }
-        requestAnimFrame(draw);
+        var breakoutLoop = requestAnimFrame(breakoutDraw);
     }
     var then = Date.now();
-    requestAnimFrame(draw);
+    var breakoutLoop = requestAnimFrame(breakoutDraw);
 }
