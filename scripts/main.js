@@ -104,7 +104,8 @@ function getMode(mode) {
 }
 //adds new item to debugDiv
 function writeLine(what_to_log) {
-    $('#debug').prepend('<li>' + what_to_log + '</li>');
+    //$('#debug').prepend('<li>' + what_to_log + '</li>');
+    console.log(what_to_log);
 }
 //removes # and Div from strings
 function removeHash(stringToRemoveHash) {
@@ -173,10 +174,13 @@ $(document).ready(function () {
 
     function aac() {
         AGE();
+        if (AGE() >= 5) {
+            window.clearInterval(ageInterval);
+        }
     }
     setTimeout(aaa, 3000);
     setTimeout(aab, 2000);
-    setInterval(aac, 50);
+    var ageInterval = setInterval(aac, 50);
 
     //buttons
     $('#breakoutButton').click(function () {
@@ -234,23 +238,22 @@ $(document).ready(function () {
         switch (char) {
             case 27:
                 scrollTo('#home');
+                MODE = null;
+                CURRENTWINDOW = 0;
         }
 
         switch (MODE) { //handles how to accept inputs depending on mode
             default: //home mode
-                $('#title').html('home' + char);
-            break;
+                break;
             case 'intro':
-                    $('#title').html('title' + char);
-                skipIntro();
+                    skipIntro();
                 MODE = null;
                 break;
             case 'breakout':
                     breakoutInputs(char);
                 break;
             case 'debug':
-                    $('#title').html('debug' + char);
-                break;
+                    break;
 
         }
     });
@@ -299,8 +302,11 @@ function breakout() { //TODO add an in game menu
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
-    window.addEventListener('resize', resizeCanvas, false);
+
     resizeCanvas();
+
+    window.addEventListener('resize', resizeCanvas, false);
+
     var ctx = canvas.getContext("2d");
     var x = canvas.width / 2;
     var y = canvas.height / 2;
@@ -313,10 +319,12 @@ function breakout() { //TODO add an in game menu
     var paddleWidth = 160;
     var paddleheight = 15;
     BKVARS.paddlePosX = canvas.width / 2;
+    BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosY = canvas.height - 35;
     BKVARS.paddleSpeed = canvas.width / 2;
 
     function bounce() { //changes trajectory of bounce
+
 
         if (dx > 0) {
             xdir = 1;
@@ -342,6 +350,7 @@ function breakout() { //TODO add an in game menu
             dx = rand(ballRandFloor, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
                 y = canvas.height - 10;
+                kaboom(x, y, 20);
             } else {
                 y = 10;
             }
@@ -369,8 +378,6 @@ function breakout() { //TODO add an in game menu
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-
-
 
     function drawBall() { //draws it
         if (settings.spinnyBall === true) {
@@ -415,7 +422,76 @@ function breakout() { //TODO add an in game menu
             BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
         }
     }
-    //TODO make a system for easily drawing particles
+
+    function kaboom(kBoomX, kBoomY, particleNum) {
+        var counter = 0;
+        while (counter <= particleNum) {
+            var temp = new PartCon();
+            temp.x = kBoomX;
+            temp.y = kBoomY;
+            temp.dx = rand(-250, 250);
+            temp.dy = rand(-250, 250);
+            particles.push(temp);
+            counter++;
+        }
+    }
+
+    //constructor for particles
+    function PartCon() {
+        this.age = 0;
+        this.life = 60;
+        this.deathLife = 10;
+        this.dying = false;
+        this.deathAnim = 'fade';
+        this.width = 10;
+        this.height = 10;
+        this.opacity = 1;
+        this.x = 0;
+        this.y = 0;
+        this.dx = 0;
+        this.dy = 0;
+        this.color = '#fff';
+        this.shape = 'rect';
+        this.update = (function (modifier, pId) {
+                this.age++;
+                this.x += this.dx * modifier;
+                this.y += this.dy * modifier;
+                if (this.age === this.life) {
+                    this.dying = true;
+                }
+            if (this.age === this.life + this.deathLife) {
+                particles.splice(pId, 1);
+            }
+            if (this.dying === true) {
+                switch(this.deathAnim) {
+                    case 'fade':
+                this.opacity -= 1 / this.deathLife;
+                    if (this.opacity <= 0) {
+                        this.opacity = 0;
+                    }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    var particles = [
+    ];
+
+    function drawParticle(pId, val, modifier) {
+        if (particles[pId]) {
+            ctx.save();
+            ctx.globalAlpha = val.opacity;
+            ctx.fillStyle = val.color;
+            if (val.shape === 'rect') {
+                ctx.fillRect(val.x, val.y, val.width, val.height);
+            }
+            ctx.restore();
+            val.update(modifier, pId);
+        }
+    }
 
     function breakoutDraw() { //clears canvas and invokes drawball and makes new pos
         if (MODE === 'breakout') { //TODO find a way to increase performance.
@@ -429,6 +505,9 @@ function breakout() { //TODO add an in game menu
                 BKVARS.delta = 1;
             }
             updateValues(BKVARS.delta / 1000);
+            $.each(particles, (function (index, val) {
+                drawParticle(index, val, (BKVARS.delta / 1000));
+            }));
             drawPaddle();
             drawBall();
             bounce();
