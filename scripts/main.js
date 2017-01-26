@@ -315,17 +315,15 @@ function breakout() { //TODO add an in game menu
     var xdir = 1;
     var ydir = 1;
     var ballRandFloor = canvas.height / 3;
-    var ballRandCeil = canvas.height / 2;
+    var ballRandCeil = canvas.height / 1.5;
     var paddleWidth = 160;
     var paddleheight = 15;
     BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosY = canvas.height - 35;
-    BKVARS.paddleSpeed = canvas.width / 2;
+    BKVARS.paddleSpeed = canvas.width / 1.5;
 
     function bounce() { //changes trajectory of bounce
-
-
         if (dx > 0) {
             xdir = 1;
         } else {
@@ -337,7 +335,7 @@ function breakout() { //TODO add an in game menu
             ydir = -1;
         }
         if (x >= canvas.width - 10 || x <= 10) { //bounce on walls
-            dx = rand(ballRandFloor, ballRandCeil) * -xdir;
+            dx = rand(100, ballRandCeil) * -xdir;
             dy = rand(ballRandFloor, ballRandCeil) * ydir;
             if (x >= canvas.width - 10) { //move the ball back onto the canvas to prevent jittering
                 x = canvas.width - 10;
@@ -347,7 +345,7 @@ function breakout() { //TODO add an in game menu
         }
         if (y >= canvas.height - 10 || y <= 10) { //bounce on ceiling and floor
             dy = rand(ballRandFloor, ballRandCeil) * -ydir;
-            dx = rand(ballRandFloor, ballRandCeil) * xdir;
+            dx = rand(100, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
                 y = canvas.height - 10;
                 kaboom(x, y, 20);
@@ -413,13 +411,21 @@ function breakout() { //TODO add an in game menu
             37 in keysDown === true &&
             BKVARS.paddlePosX >= paddleWidth / 2
         ) {
-            BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier;
+            if (16 in keysDown === false) {
+                BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier;
+            } else {
+                BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier / 3;
+            }
         }
         if (68 in keysDown === true ||
             39 in keysDown === true &&
-            BKVARS.paddlePosX <= (canvas.width - (paddleWidth / 2))
+            BKVARS.paddlePosX <= (canvas.width - (paddleWidth / 3))
         ) {
-            BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
+            if (16 in keysDown === false) {
+                BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
+            } else
+                BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier / 3;
+
         }
     }
 
@@ -453,22 +459,22 @@ function breakout() { //TODO add an in game menu
         this.color = '#fff';
         this.shape = 'rect';
         this.update = (function (modifier, pId) {
-                this.age++;
-                this.x += this.dx * modifier;
-                this.y += this.dy * modifier;
-                if (this.age === this.life) {
-                    this.dying = true;
-                }
+            this.age++;
+            this.x += this.dx * modifier;
+            this.y += this.dy * modifier;
+            if (this.age === this.life) {
+                this.dying = true;
+            }
             if (this.age === this.life + this.deathLife) {
                 particles.splice(pId, 1);
             }
             if (this.dying === true) {
-                switch(this.deathAnim) {
+                switch (this.deathAnim) {
                     case 'fade':
-                this.opacity -= 1 / this.deathLife;
-                    if (this.opacity <= 0) {
-                        this.opacity = 0;
-                    }
+                        this.opacity -= 1 / this.deathLife;
+                        if (this.opacity <= 0) {
+                            this.opacity = 0;
+                        }
                         break;
                     default:
                         break;
