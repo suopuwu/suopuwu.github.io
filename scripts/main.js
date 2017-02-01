@@ -291,25 +291,35 @@ function breakoutInputs(char) {
 
 }
 
-function breakout() { //TODO add an in game menu
+function breakout() {
     var canvas = document.getElementById("lay1");
+    var canvas2 = document.getElementById("lay2");
     //settings
     var settings = {
         spinnyBall: true
     };
 
     function resizeCanvas() {
+        if (ctx) {
+            setTimeout(resetColor, 15);
+        }
         canvas.width = window.innerWidth;
+        canvas2.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        canvas2.height = window.innerHeight;
     }
 
+    function resetColor() {
+        ctx.fillStyle = '#fff';
+    }
     resizeCanvas();
 
     window.addEventListener('resize', resizeCanvas, false);
 
     var ctx = canvas.getContext("2d");
+    var ctx2 = canvas2.getContext("2d");
     var x = canvas.width / 2;
-    var y = canvas.height / 2;
+    var y = canvas.height / 1.5;
     var dx = -200;
     var dy = -200;
     var xdir = 1;
@@ -318,10 +328,14 @@ function breakout() { //TODO add an in game menu
     var ballRandCeil = canvas.height / 1.5;
     var paddleWidth = 160;
     var paddleheight = 15;
+    var brickSpace = [];
+    var prevX = 0;
+    var prevY = 0;
     BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosX = canvas.width / 2;
     BKVARS.paddlePosY = canvas.height - 35;
     BKVARS.paddleSpeed = canvas.width / 1.5;
+    var brickWidthForBreakout;
 
     function bounce() { //changes trajectory of bounce
         if (dx > 0) {
@@ -348,22 +362,42 @@ function breakout() { //TODO add an in game menu
             dx = rand(100, ballRandCeil) * xdir;
             if (y >= canvas.height - 10) { //same as above
                 y = canvas.height - 10;
-                kaboom(x, y, 20);
+                kaboom(x - 10, y - 10, 20);
             } else {
                 y = 10;
             }
         }
+        $.each(brickSpace, function (idx, val) {
+            $.each(val, function (index, value) { //value[0] is min x [1] is max x [2] is min y [3] is max y
+                if (y <= value[3] + 10 && y >= value[2] - 10 && x >= value[0] - 10 && x <= value[1] + 10) {
+                    if (prevY >= value[3] + 10 || prevY <= value[2] - 10) {
+                        dy = rand(ballRandFloor, ballRandCeil) * -ydir;
+                        dx = rand(100, ballRandCeil) * xdir;
+                    }
+                    if (prevX <= value[0] - 10 || prevX >= value[1]) {
+                        dx = rand(100, ballRandCeil) * -xdir;
+                        dy = rand(ballRandFloor, ballRandCeil) * ydir;
+                    }
+                    ctx2.clearRect(value[0] - 1, value[2] - 1, value[1] - value[0] + 2, value[3] - value[2] + 2);
+                    brickSpace[idx][index].splice(0, 4);
+                    kaboom(value[0], value[2], 20);
+                }
+            });
+
+
+        });
         if (y >= BKVARS.paddlePosY - paddleheight &&
             x >= BKVARS.paddlePosX - (paddleWidth / 2) &&
             x <= BKVARS.paddlePosX + (paddleWidth / 2)
         ) {
             dy = rand(ballRandFloor, ballRandCeil) * -ydir;
-            dx = rand(ballRandFloor, ballRandCeil) * xdir;
+            dx = rand(100, ballRandCeil) * xdir;
             y = BKVARS.paddlePosY - paddleheight;
         }
     }
 
     ctx.fillStyle = '#fff';
+    ctx2.fillStyle = '#fff';
 
     var spinnyBall = (function () {
         var angle = 0;
@@ -375,6 +409,10 @@ function breakout() { //TODO add an in game menu
 
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function clearCanvas2() {
+        ctx2.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function drawBall() { //draws it
@@ -404,24 +442,28 @@ function breakout() { //TODO add an in game menu
 
     function updateValues(modifier) {
         //update the ball position
+        prevX = x;
+        prevY = y;
         x += dx * modifier;
         y += dy * modifier;
         //update the paddle position
-        if (65 in keysDown === true ||
-            37 in keysDown === true &&
+        if (65 in keysDown === true &&
+            BKVARS.paddlePosX >= paddleWidth / 2 ||
+            37 in keysDown === true && //left arrow
             BKVARS.paddlePosX >= paddleWidth / 2
         ) {
-            if (16 in keysDown === false) {
+            if (16 in keysDown === false) { //shift
                 BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier;
             } else {
                 BKVARS.paddlePosX -= BKVARS.paddleSpeed * modifier / 3;
             }
         }
-        if (68 in keysDown === true ||
-            39 in keysDown === true &&
+        if (68 in keysDown === true && //d
+            BKVARS.paddlePosX <= (canvas.width - (paddleWidth / 3)) ||
+            39 in keysDown === true && //right arrow
             BKVARS.paddlePosX <= (canvas.width - (paddleWidth / 3))
         ) {
-            if (16 in keysDown === false) {
+            if (16 in keysDown === false) { //shift
                 BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier;
             } else
                 BKVARS.paddlePosX += BKVARS.paddleSpeed * modifier / 3;
@@ -443,21 +485,48 @@ function breakout() { //TODO add an in game menu
     }
 
     //constructor for particles
-    function PartCon() {
+    function PartCon(x, y, life, width, height, color, dx, dy, shape) {
         this.age = 0;
         this.life = 60;
+        if (!this.life) {
+            this.life = life;
+        }
         this.deathLife = 10;
         this.dying = false;
         this.deathAnim = 'fade';
         this.width = 10;
+        if (!this.width) {
+            this.width = width;
+        }
         this.height = 10;
+        if (!this.height) {
+            this.height = height;
+        }
         this.opacity = 1;
         this.x = 0;
+        if (!this.x) {
+            this.x = x;
+        }
         this.y = 0;
+        if (!this.y) {
+            this.y = y;
+        }
         this.dx = 0;
+        if (!this.dx) {
+            this.dx = dx;
+        }
         this.dy = 0;
+        if (!this.dy) {
+            this.dy = dy;
+        }
         this.color = '#fff';
+        if (!this.color) {
+            this.color = color;
+        }
         this.shape = 'rect';
+        if (this.shape) {
+            this.shape = 'rect';
+        }
         this.update = (function (modifier, pId) {
             this.age++;
             this.x += this.dx * modifier;
@@ -490,7 +559,6 @@ function breakout() { //TODO add an in game menu
         if (particles[pId]) {
             ctx.save();
             ctx.globalAlpha = val.opacity;
-            ctx.fillStyle = val.color;
             if (val.shape === 'rect') {
                 ctx.fillRect(val.x, val.y, val.width, val.height);
             }
@@ -499,8 +567,47 @@ function breakout() { //TODO add an in game menu
         }
     }
 
+    function drawBricks(bricksPerRow, rows) {
+        if (!bricksPerRow) {
+            bricksPerRow = 10;
+        }
+
+        if (!rows) {
+            rows = 4;
+        }
+        var brickWidth = (canvas.width - 20) / bricksPerRow - 20;
+        var bricks = 0;
+        var row = 0;
+        var counter1 = 0;
+        var counter2 = 0;
+        console.log(brickWidth);
+        while (counter1 < rows) {
+            brickSpace.push([]);
+            while (counter2 < bricksPerRow) {
+                brickSpace[counter1].push([counter2 * 20 + 20 + (counter2 * brickWidth), //x min
+                    (counter2 * 20) + 20 + ((counter2 + 1) * brickWidth), //x max
+                    (counter1 * 20) + 20 + (counter1 * brickWidth / 2), //y min
+                    (counter1 * 20) + 20 + (counter1 * brickWidth / 2) + (brickWidth / 2)]); //y max
+                counter2++;
+            }
+            counter2 = 0;
+            counter1++;
+            console.log(brickSpace);
+        }
+        while (bricks < bricksPerRow) {
+            ctx2.fillRect((20 + (bricks * 20) + (bricks * brickWidth)), 20 + (row * brickWidth / 2) + (row * 20), brickWidth, brickWidth / 2);
+            bricks++;
+            if (bricks === bricksPerRow && row !== rows - 1) {
+                bricks = 0;
+                row++;
+            }
+        }
+    }
+
+    drawBricks();
+
     function breakoutDraw() { //clears canvas and invokes drawball and makes new pos
-        if (MODE === 'breakout') { //TODO find a way to increase performance.
+        if (MODE === 'breakout') {
             var now = Date.now();
             clearCanvas();
             //makes delta a different value depending on whether it was lag or moving away from the window

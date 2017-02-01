@@ -4,7 +4,7 @@
 <head>
     <title id="title">Suop</title>
     <!--external bits-->
-    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/lib/reset.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/index.css">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
@@ -21,9 +21,9 @@
         firebase.initializeApp(config);
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="scripts/prefixfree.min.js"></script>
+    <script src="lib/prefixfree.min.js"></script>
     <script src="/scripts/main.js"></script>
-    <!--  <script src="scripts/two.js"></script>-->
+    <!--  <script src="lib/two.js"></script>-->
 </head>
 
 <body>
@@ -41,7 +41,8 @@
 
 
     <div class="container" id="breakoutDiv" style="background: url('/images/tree.png'); display: none;">
-        <canvas id="lay1" width="512" height="512">No canvas for you!</canvas>
+        <canvas id="lay1" width="512" height="512" style="z-index:1; position: absolute;">No canvas for you!</canvas>
+        <canvas id="lay2" width="512" height="512" style="z-index:0; position: absolute;">No canvas for you!</canvas>
     </div>
     <div class="container debug" id="debugDiv" style="display: none; background: #000000; overflow: scroll;">
         <ul id="debug">
