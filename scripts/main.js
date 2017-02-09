@@ -1,4 +1,3 @@
-"use strict";
 //appease the lint gods
 //if you're looking for something to do, search fix or todo
 var MODE = 'intro',
@@ -32,14 +31,13 @@ var SCROLLORDER = ['#home'];
 var database = firebase.database();
 // Get a key for a new user.
 var newuid = firebase.database().ref().child('users').push().key;
-/*88888888ba
-  88      "8b
-  88      ,8P
-  88aaaaaa8P'  ,adPPYYba,  ,adPPYba,   ,adPPYba,
-  88""""""8b,  ""     `Y8  I8[    ""  a8P_____88
-  88      `8b  ,adPPPPP88   `"Y8ba,   8PP"""""""
-  88      a8P  88,    ,88  aa    ]8I  "8b,   ,aa
-  88888888P"   `"8bbdP"Y8  `"YbbdP"'   `"Ybbd8"'  Base*/
+/*██████   █████  ███████ ███████
+  ██   ██ ██   ██ ██      ██
+  ██████  ███████ ███████ █████
+  ██   ██ ██   ██      ██ ██
+  ██████  ██   ██ ███████ ███████*/
+
+
 //firebase stuff
 function addUser(userName, userId) { //IMPORTANT this is how you write to the database
     database.ref('users/' + userId).set({
@@ -102,11 +100,13 @@ function getMode(mode) {
 
     }
 }
-//adds new item to debugDiv
-function writeLine(what_to_log) {
-    //$('#debug').prepend('<li>' + what_to_log + '</li>');
-    console.log(what_to_log);
-}
+
+// function writeLine(what_to_log) {
+//     //the below comment is for my bad webpage specific solution
+//     //$('#debug').prepend('<li>' + what_to_log + '</li>');
+//     window.console.log(what_to_log);
+// }
+
 //removes # and Div from strings
 function removeHash(stringToRemoveHash) {
     var noHash = stringToRemoveHash.split('');
@@ -143,15 +143,13 @@ function removeWindow(windowToRemove) {
 function add(a, b) {
     return a + b;
 }
-/*88b           d88              88
-  888b         d888              ""
-  88`8b       d8'88
-  88 `8b     d8' 88  ,adPPYYba,  88  8b,dPPYba,
-  88  `8b   d8'  88  ""     `Y8  88  88P'   `"8a
-  88   `8b d8'   88  ,adPPPPP88  88  88       88
-  88    `888'    88  88,    ,88  88  88       88
-  88     `8'     88  `"8bbdP"Y8  88  88       88  Main*/
-//ASCII font is univers
+/*███    ███  █████  ██ ███    ██
+  ████  ████ ██   ██ ██ ████   ██
+  ██ ████ ██ ███████ ██ ██ ██  ██
+  ██  ██  ██ ██   ██ ██ ██  ██ ██
+  ██      ██ ██   ██ ██ ██   ████*/
+
+
 
 $(document).ready(function () {
     //breakout canvas adjustments and start if clicked
@@ -170,7 +168,7 @@ $(document).ready(function () {
     function aab() {
         $('.fade-in').css('opacity', '1');
     }
-    //closure and age 
+    //closure and age
 
     function aac() {
         AGE();
@@ -201,16 +199,11 @@ $(document).ready(function () {
         }
     });
 
-    /*          88
-                88                                           ,d
-                88                                           88
-                88  8b,dPPYba,   8b,dPPYba,   88       88  MM88MMM  ,adPPYba,
-                88  88P'   `"8a  88P'    "8a  88       88    88     I8[    ""
-                88  88       88  88       d8  88       88    88      `"Y8ba,
-                88  88       88  88b,   ,a8"  "8a,   ,a88    88,    aa    ]8I
-                88  88       88  88`YbbdP"'    `"YbbdP'Y8    "Y888  `"YbbdP"'
-                                 88
-                                 88*/
+  /*██ ███    ██ ██████  ██    ██ ████████ ███████
+    ██ ████   ██ ██   ██ ██    ██    ██    ██
+    ██ ██ ██  ██ ██████  ██    ██    ██    ███████
+    ██ ██  ██ ██ ██      ██    ██    ██         ██
+    ██ ██   ████ ██       ██████     ██    ███████*/
     //runs on scroll
     window.addEventListener('resize', CurrentWindowScroll, false);
 
@@ -271,14 +264,13 @@ $(document).ready(function () {
 
 });
 
-/*88888888ba                                       88
-  88      "8b                                      88                                    ,d
-  88      ,8P                                      88                                    88
-  88aaaaaa8P'  8b,dPPYba,   ,adPPYba,  ,adPPYYba,  88   ,d8   ,adPPYba,   88       88  MM88MMM
-  88""""""8b,  88P'   "Y8  a8P_____88  ""     `Y8  88 ,a8"   a8"     "8a  88       88    88
-  88      `8b  88          8PP"""""""  ,adPPPPP88  8888[     8b       d8  88       88    88
-  88      a8P  88          "8b,   ,aa  88,    ,88  88`"Yba,  "8a,   ,a8"  "8a,   ,a88    88,
-  88888888P"   88           `"Ybbd8"'  `"8bbdP"Y8  88   `Y8a  `"YbbdP"'    `"YbbdP'Y8    "Y888  Breakout*/
+/*██████  ██████  ███████  █████  ██   ██  ██████  ██    ██ ████████
+  ██   ██ ██   ██ ██      ██   ██ ██  ██  ██    ██ ██    ██    ██
+  ██████  ██████  █████   ███████ █████   ██    ██ ██    ██    ██
+  ██   ██ ██   ██ ██      ██   ██ ██  ██  ██    ██ ██    ██    ██
+  ██████  ██   ██ ███████ ██   ██ ██   ██  ██████   ██████     ██*/
+
+
 var BKVARS = {
     paddlePosX: 500,
     paddlePosY: null,
@@ -415,7 +407,7 @@ function breakout() {
         ctx2.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function drawBall() { //draws it
+    var drawBall = (function () { //draws it
         if (settings.spinnyBall === true) {
             drawBall = (function () {
                 ctx.save();
@@ -432,7 +424,7 @@ function breakout() {
                 ctx.restore();
             });
         }
-    }
+    });
     drawBall();
 
     function drawPaddle() {
