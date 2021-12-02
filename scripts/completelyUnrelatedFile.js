@@ -1,4 +1,5 @@
 !function(t) {
+    document.title = "5217 - Gameing Edition";
     var e = {};
     function n(i) {
         if (e[i])
